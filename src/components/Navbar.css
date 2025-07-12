@@ -1,0 +1,29 @@
+.navbar{
+    background-color: rgb(50, 50, 50);
+    margin-bottom: 20px;
+    height: 50px;
+    
+    
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    align-items:center;
+    border-bottom: 1px solid white;
+}
+
+.navbar-brand{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+
+.nav-links{
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+}
