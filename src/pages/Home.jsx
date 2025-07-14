@@ -1,30 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MovieCard from '../components/MovieCard.jsx';
 import './Home.css';
-import Navabar from '../components/Navbar.jsx'
+import Navabar from '../components/Navbar.jsx';
+import {searchMovies, getPopularMovies} from '../services/api.js';
+import './Home.css';
 
 function Home() {
     const [searchTerm, setSearchTerm] = useState('');
-    const movies = [
-        {
-            id: 1,
-            title: "John Wick", 
-            release_date: "2020",
-            url: "url"
-        },
-        {
-            id: 2,
-            title: "Texas Chainsaw Massacre", 
-            release_date: "1990",
-            url: "url2"  
-        },
-        {
-            id: 3,
-            title: "Blade Runner", 
-            release_date: "1995",
-            url: "url3"  
+    const [movies, setMovies] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+ 
+    useEffect(()=>{
+        const loadPopularMovies = async() =>{
+            try{
+                const popularMovies = await getPopularMovies();
+                setMovies(popularMovies);
+            }catch (err){
+                console.log(err);
+                setError("failed");
+            }
+            finally{
+                setLoading(false);
+            }
         }
-    ];
+        loadPopularMovies();
+    }, []);
+
+    
 
     function formSubmitHandler(e) {
         e.preventDefault();
@@ -55,12 +58,15 @@ function Home() {
                 </button>
             </form>
 
-            <div className='movies-grid'>
-                {
-              
-                movies.map(movie => <MovieCard movie={movie} key={movie.id} />
-                )}
+            {error && <div className='error-message'>{error}</div>}
+
+            {loading ? <div className='loading'>Loading...</div> :
+             (<div className='movies-grid'>
+                {movies.map(movie => <MovieCard movie={movie} key={movie.id} />)}
             </div>
+            )}
+
+  
         </div>
     );
 }

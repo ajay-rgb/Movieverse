@@ -1,15 +1,71 @@
 .movie-card{
-    height:180px;
-    width:120px;
-    background-color: rgb(48, 48, 48);
-    padding: 10px 20px;
+    height:fit-content;
+    width:200px;
+    position: relative;
+    background-color: rgb(214, 2, 2);
     border-radius: 10px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.799);
     display: flex;
     flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    gap: 5px;
+    margin: 20px;
+}
+.movie-card:hover .movie-overlay{
+    opacity: 1;
+}
+.movie-overlay{
+   position:absolute;
+ 
+    opacity: 0;
+    transition: opacity 0.2s;
+    width:100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size:smaller;
-    gap: 10px;
-    margin: 20px;
+}
+favourite-btn{
+    background:transparent;
+    border: none;
+    color:white;
+    font-size:2rem;
+    cursor:pointer;
+    transition: tranform 0.3s;
+}
+.favourite-btn:hover {
+    transform: scale(1.2);
+    color: red;
+}
+
+.movie-info p {
+    margin: 5px 0 0;
+    color: #ffffff;
+    font-size: 0.9rem;
+    text-align: center
+}
+.movie-info {
+    padding: 10px 0;
+}
+
+.movie-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    text-align: center;
+}
+.movie-image img{
+    
+    width:100%;
+    height: 100%;
+    object-position: center;
+   object-fit: cover;
+   border-radius: 5px;
+    
 }
