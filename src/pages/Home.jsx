@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import MovieCard from '../components/MovieCard.jsx';
 import './Home.css';
 import Navabar from '../components/Navbar.jsx';
-import {searchMovies, getPopularMovies} from '../services/api.js';
-import './Home.css';
+import { searchMovies, getPopularMovies } from '../services/api.js';
 
 function Home() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,39 +10,51 @@ function Home() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
  
-    useEffect(()=>{
-        const loadPopularMovies = async() =>{
-            try{
+    useEffect(() => {
+        const loadPopularMovies = async () => {
+            try {
+                setLoading(true);
                 const popularMovies = await getPopularMovies();
                 setMovies(popularMovies);
-            }catch (err){
+            } catch (err) {
                 console.log(err);
-                setError("failed");
-            }
-            finally{
+                setError("Failed to load popular movies");
+            } finally {
                 setLoading(false);
             }
         }
         loadPopularMovies();
     }, []);
 
-    
-
-    function formSubmitHandler(e) {
-        e.preventDefault();
-        alert(`You searched for: ${searchTerm}`);
-        setSearchTerm('');
-    }
-
-    function handleInputChange(e) {
+    const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
     }
+    
+    const formSubmitHandler = async (e) => {
+        e.preventDefault();
+        if (!searchTerm.trim()) return;
+        if (loading) return;
+        
+        try {
+            setLoading(true);
+            const searchResults = await searchMovies(searchTerm);
+            setMovies(searchResults);
+            setError(null);
+        } catch (err) {
+            console.log(err);
+            setError("Failed to search movies");
+        } finally {
+            setLoading(false);
+        }
 
-    return(
+        setSearchTerm('');
+    };
+
+    return (
         <div className="home">
-
-            <Navabar />
-
+            <div className='nav-container'>
+                <Navabar />
+            </div>
 
             <form onSubmit={formSubmitHandler} className='search-form'>
                 <input 
@@ -60,13 +71,15 @@ function Home() {
 
             {error && <div className='error-message'>{error}</div>}
 
-            {loading ? <div className='loading'>Loading...</div> :
-             (<div className='movies-grid'>
-                {movies.map(movie => <MovieCard movie={movie} key={movie.id} />)}
-            </div>
+            {loading ? (
+                <div className='loading'>Loading...</div>
+            ) : (
+                <div className='movies-grid'>
+                    {movies.map(movie => (
+                        <MovieCard movie={movie} key={movie.id} />
+                    ))}
+                </div>
             )}
-
-  
         </div>
     );
 }

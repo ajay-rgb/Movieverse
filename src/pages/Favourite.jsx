@@ -1,4 +1,5 @@
-import Navabar from '../components/Navbar.jsx'
+import Navabar from '../components/Navbar.jsx';
+import './Favourite.css';
 function Favourite(){
     return(
         <div className="favourites">
