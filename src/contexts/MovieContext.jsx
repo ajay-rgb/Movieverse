@@ -1,49 +1,65 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 
-const MovieContext = createContext();
+const MovieContext = createContext(null);
 
-export const useMovieContext = () => {
-    return useContext(MovieContext);
-}
+export const useMovieContext = () => useContext(MovieContext);
 
-export const MovieProvider = ({children}) => {
-    const [favourites, setFavourites] = useState([]);
+export const MovieProvider = ({ children }) => {
+  const [favourites, setFavourites] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("favourites")) || [];
+    } catch {
+      return [];
+    }
+  });
 
-    // Load favourites from localStorage on initial render
-    useEffect(() => {
-        const storedFavourites = JSON.parse(localStorage.getItem('favourites')) || [];
-        setFavourites(storedFavourites);
-    }, []);
-
-    // Save favourites to localStorage whenever they change
-    useEffect(() => {
-        localStorage.setItem('favourites', JSON.stringify(favourites));
-    }, [favourites]);
-
-    const addToFavourite = (movie) => {
-        if (!favourites.some(fav => fav.id === movie.id)) {
-            setFavourites(prev => [...prev, movie]);
-        }
+  /* keep tabs in sync */
+  useEffect(() => {
+    const sync = (e) => {
+      if (e.key === "favourites") {
+        setFavourites(JSON.parse(e.newValue) || []);
+      }
     };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, []);
 
-    const removeFromFavourite = (movieId) => {
-        setFavourites(prev => prev.filter(movie => movie.id !== movieId));
-    };
+  /* persist */
+  useEffect(() => {
+    localStorage.setItem("favourites", JSON.stringify(favourites));
+  }, [favourites]);
 
-    const isFavourite = (movieId) => {
-        return favourites.some(movie => movie.id === movieId);
-    };
+  const addToFavourite = useCallback(
+    (movie) =>
+      setFavourites((prev) =>
+        prev.some((m) => m.id === movie.id) ? prev : [...prev, movie]
+      ),
+    []
+  );
 
-    const value = {
-        favourites,
-        addToFavourite,
-        removeFromFavourite,
-        isFavourite
-    };
-    
-    return (
-        <MovieContext.Provider value={value}>
-            {children}
-        </MovieContext.Provider>
-    );
+  const removeFromFavourite = useCallback(
+    (id) => setFavourites((prev) => prev.filter((m) => m.id !== id)),
+    []
+  );
+
+  const isFavourite = useCallback(
+    (id) => favourites.some((m) => m.id === id),
+    [favourites]
+  );
+
+  return (
+    <MovieContext.Provider
+      value={{ favourites, addToFavourite, removeFromFavourite, isFavourite }}
+    >
+      {children}
+    </MovieContext.Provider>
+  );
 };
+
+export default MovieProvider;

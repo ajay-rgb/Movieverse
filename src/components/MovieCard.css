@@ -36,6 +36,9 @@ favourite-btn{
     cursor:pointer;
     transition: tranform 0.3s;
 }
+.favourite-btnactive{
+    color:Red;
+}
 .favourite-btn:hover {
     transform: scale(1.2);
     color: red;

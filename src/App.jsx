@@ -4,12 +4,14 @@ import MovieCard from './components/MovieCard';
 import Home from './pages/Home';
 import Favourite from './pages/Favourite';
 import { Route, Routes } from 'react-router-dom';
+import MovieContext from './contexts/MovieContext';
 
 function App() {
 
 
   return (
-    <>
+    <MovieContext>
+
       <div className='main-content'>
           <Routes>
             <Route path='/' element={<Home/>} ></Route>
@@ -17,7 +19,11 @@ function App() {
             <Route path='/Favourite' element={<Favourite/>} ></Route>
           </Routes>
       </div>
-    </>
+
+
+    </MovieContext>
+
+    
   )
 }
 
